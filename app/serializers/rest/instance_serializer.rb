@@ -116,6 +116,10 @@ class REST::InstanceSerializer < ActiveModel::Serializer
         },
       },
 
+      reactions: {
+        max_reactions: StatusReactionValidator::LIMIT,
+      },
+
       limited_federation: limited_federation?,
     }
   end
