@@ -3,6 +3,7 @@
 class Auth::SessionsController < Devise::SessionsController
   layout 'auth'
 
+  skip_before_action :check_self_destruct!
   skip_before_action :require_no_authentication, only: [:create]
   skip_before_action :require_functional!
   skip_before_action :update_user_sign_in
@@ -10,7 +11,7 @@ class Auth::SessionsController < Devise::SessionsController
   prepend_before_action :set_pack
   prepend_before_action :check_suspicious!, only: [:create]
 
-  include TwoFactorAuthenticationConcern
+  include Auth::TwoFactorAuthenticationConcern
 
   before_action :set_body_classes
 
