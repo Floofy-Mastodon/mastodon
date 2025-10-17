@@ -1,0 +1,32 @@
+name: Build Docker image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: floofy-mastodon
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Run build
+      run: |
+        TARGETPLATFORM=linux/amd64 docker buildx build . -t ghcr.io/floofy-mastodon/mastodon --build-arg MASTODON_VERSION_METADATA=floofy-custom --load -f ./Dockerfile
+        TARGETPLATFORM=linux/amd64 docker buildx build . -t ghcr.io/floofy-mastodon/mastodon-streaming --build-arg MASTODON_VERSION_METADATA=floofy-custom --load -f ./streaming/Dockerfile
+
+    - name: Push images
+      run: |
+        docker push ghcr.io/floofy-mastodon/mastodon
+        docker push ghcr.io/floofy-mastodon/mastodon-streaming
