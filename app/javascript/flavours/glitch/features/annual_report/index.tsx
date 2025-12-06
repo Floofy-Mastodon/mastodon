@@ -16,6 +16,7 @@ import { Followers } from './followers';
 import { HighlightedPost } from './highlighted_post';
 import { MostUsedHashtag } from './most_used_hashtag';
 import { NewPosts } from './new_posts';
+import { Percentile } from './percentile';
 
 const shareMessage = defineMessage({
   id: 'annual_report.summary.share_message',
@@ -59,6 +60,7 @@ export const AnnualReport: FC<{ share?: boolean }> = ({ share = true }) => {
           total={currentAccount?.followers_count}
         />
         <MostUsedHashtag data={report.data.top_hashtags} />
+        <Percentile data={report.data.percentiles} />
         <NewPosts data={report.data.time_series} />
         {share && <ShareButton report={report} />}
       </div>

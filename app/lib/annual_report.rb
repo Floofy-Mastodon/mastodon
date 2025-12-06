@@ -10,6 +10,7 @@ class AnnualReport
     AnnualReport::MostUsedApps,
     AnnualReport::TimeSeries,
     AnnualReport::TopHashtags,
+    AnnualReport::Percentiles,
   ].freeze
 
   SCHEMA = 2
