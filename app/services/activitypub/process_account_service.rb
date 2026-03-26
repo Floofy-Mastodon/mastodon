@@ -10,6 +10,9 @@ class ActivityPub::ProcessAccountService < BaseService
   SUBDOMAINS_RATELIMIT = 10
   DISCOVERIES_PER_REQUEST = 400
 
+  PROCESSING_DELAY = (30.seconds)..(10.minutes)
+  VERIFY_DELAY = 10.minutes
+
   VALID_URI_SCHEMES = %w(http https).freeze
 
   # Should be called with confirmed valid JSON
@@ -60,11 +63,12 @@ class ActivityPub::ProcessAccountService < BaseService
     unless @options[:only_key] || @account.suspended?
       check_featured_collection! if @json['featured'].present?
       check_featured_tags_collection! if @json['featuredTags'].present?
+      check_featured_collections_collection! if @json['featuredCollections'].present? && Mastodon::Feature.collections_federation_enabled?
       check_links! if @account.fields.any?(&:requires_verification?)
     end
 
     @account
-  rescue Oj::ParseError
+  rescue JSON::ParserError
     nil
   end
 
@@ -125,6 +129,7 @@ class ActivityPub::ProcessAccountService < BaseService
 
   def set_immediate_attributes!
     @account.featured_collection_url = valid_collection_uri(@json['featured'])
+    @account.collections_url         = valid_collection_uri(@json['featuredCollections'])
     @account.display_name            = (@json['name'] || '')[0...(Account::DISPLAY_NAME_LENGTH_HARD_LIMIT)]
     @account.note                    = (@json['summary'] || '')[0...(Account::NOTE_LENGTH_HARD_LIMIT)]
     @account.locked                  = @json['manuallyApprovesFollowers'] || false
@@ -133,6 +138,9 @@ class ActivityPub::ProcessAccountService < BaseService
     @account.discoverable            = @json['discoverable'] || false
     @account.indexable               = @json['indexable'] || false
     @account.memorial                = @json['memorial'] || false
+    @account.show_featured           = @json['showFeatured'] if @json.key?('showFeatured')
+    @account.show_media              = @json['showMedia'] if @json.key?('showMedia')
+    @account.show_media_replies      = @json['showRepliesInMedia'] if @json.key?('showRepliesInMedia')
     @account.attribution_domains     = as_array(@json['attributionDomains'] || []).take(Account::ATTRIBUTION_DOMAINS_HARD_LIMIT).map { |item| value_or_id(item) }
   end
 
@@ -147,7 +155,7 @@ class ActivityPub::ProcessAccountService < BaseService
       @account.avatar = nil if @account.avatar_remote_url.blank?
       @account.avatar_description = avatar_description || ''
     rescue Mastodon::UnexpectedResponseError, *Mastodon::HTTP_CONNECTION_ERRORS
-      RedownloadAvatarWorker.perform_in(rand(30..600).seconds, @account.id)
+      RedownloadAvatarWorker.perform_in(rand(PROCESSING_DELAY), @account.id)
     end
     begin
       header_url, header_description = image_url_and_description('image')
@@ -155,7 +163,7 @@ class ActivityPub::ProcessAccountService < BaseService
       @account.header = nil if @account.header_remote_url.blank?
       @account.header_description = header_description || ''
     rescue Mastodon::UnexpectedResponseError, *Mastodon::HTTP_CONNECTION_ERRORS
-      RedownloadHeaderWorker.perform_in(rand(30..600).seconds, @account.id)
+      RedownloadHeaderWorker.perform_in(rand(PROCESSING_DELAY), @account.id)
     end
     @account.statuses_count    = outbox_total_items    if outbox_total_items.present?
     @account.following_count   = following_total_items if following_total_items.present?
@@ -200,8 +208,12 @@ class ActivityPub::ProcessAccountService < BaseService
     ActivityPub::SynchronizeFeaturedTagsCollectionWorker.perform_async(@account.id, @json['featuredTags'])
   end
 
+  def check_featured_collections_collection!
+    ActivityPub::SynchronizeFeaturedCollectionsCollectionWorker.perform_async(@account.id, @options[:request_id])
+  end
+
   def check_links!
-    VerifyAccountLinksWorker.perform_in(rand(10.minutes.to_i), @account.id)
+    VerifyAccountLinksWorker.perform_in(rand(VERIFY_DELAY), @account.id)
   end
 
   def process_duplicate_accounts!
@@ -232,7 +244,7 @@ class ActivityPub::ProcessAccountService < BaseService
       url = first_of_value(value['url'])
       url = url['href'] if url.is_a?(Hash)
       description = value['summary'].presence || value['name'].presence
-      description = description.strip[0...MediaAttachment::MAX_DESCRIPTION_LENGTH] if description.present?
+      description = description.strip[0...MediaAttachment::MAX_DESCRIPTION_HARD_LENGTH_LIMIT] if description.present?
     else
       url = value
     end

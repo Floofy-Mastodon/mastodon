@@ -30,6 +30,7 @@ class REST::StatusSerializer < ActiveModel::Serializer
   has_many :ordered_mentions, key: :mentions
   has_many :tags
   has_many :emojis, serializer: REST::CustomEmojiSerializer
+  has_many :tagged_collections, serializer: REST::CollectionSerializer
   has_many :reactions, serializer: REST::ReactionSerializer
 
   # Due to a ActiveModel::Serializer quirk, if you change any of the following, have a look at
@@ -171,6 +172,10 @@ class REST::StatusSerializer < ActiveModel::Serializer
     object.active_mentions.to_a.sort_by(&:id)
   end
 
+  def tagged_collections
+    object.tagged_objects.filter_map { |tagged_object| tagged_object.object if tagged_object.ap_type == 'FeaturedCollection' }
+  end
+
   def reactions
     object.reactions(current_user&.account&.id)
   end
@@ -217,13 +222,5 @@ class REST::StatusSerializer < ActiveModel::Serializer
     end
   end
 
-  class TagSerializer < ActiveModel::Serializer
-    include RoutingHelper
-
-    attributes :name, :url
-
-    def url
-      tag_url(object)
-    end
-  end
+  class TagSerializer < REST::ShallowTagSerializer; end
 end

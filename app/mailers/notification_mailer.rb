@@ -15,6 +15,8 @@ class NotificationMailer < ApplicationMailer
 
   before_deliver :verify_functional_user
 
+  around_action :set_locale
+
   default to: -> { email_address_with_name(@user.email, @me.username) }
 
   layout 'mailer'
@@ -22,23 +24,17 @@ class NotificationMailer < ApplicationMailer
   def mention
     return if @status.blank?
 
-    locale_for_account(@me) do
-      mail subject: default_i18n_subject(name: @status.account.acct)
-    end
+    mail subject: default_i18n_subject(name: @status.account.acct)
   end
 
   def quote
     return if @status.blank?
 
-    locale_for_account(@me) do
-      mail subject: default_i18n_subject(name: @status.account.acct)
-    end
+    mail subject: default_i18n_subject(name: @status.account.acct)
   end
 
   def follow
-    locale_for_account(@me) do
-      mail subject: default_i18n_subject(name: @account.acct)
-    end
+    mail subject: default_i18n_subject(name: @account.acct)
   end
 
   def favourite
@@ -52,23 +48,17 @@ class NotificationMailer < ApplicationMailer
   def reaction
     return if @status.blank?
 
-    locale_for_account(@me) do
-      mail subject: default_i18n_subject(name: @account.acct)
-    end
+    mail subject: default_i18n_subject(name: @account.acct)
   end
 
   def reblog
     return if @status.blank?
 
-    locale_for_account(@me) do
-      mail subject: default_i18n_subject(name: @account.acct)
-    end
+    mail subject: default_i18n_subject(name: @account.acct)
   end
 
   def follow_request
-    locale_for_account(@me) do
-      mail subject: default_i18n_subject(name: @account.acct)
-    end
+    mail subject: default_i18n_subject(name: @account.acct)
   end
 
   private
@@ -87,6 +77,10 @@ class NotificationMailer < ApplicationMailer
 
   def set_account
     @account = @notification.from_account
+  end
+
+  def set_locale(&block)
+    locale_for_account(@me, &block)
   end
 
   def verify_functional_user
