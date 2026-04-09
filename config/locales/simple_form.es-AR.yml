@@ -134,6 +134,7 @@ es-AR:
         otp: 'Ingresá el código de autenticación de dos factores generado por la aplicación en tu dispositivo, o usá uno de tus códigos de recuperación:'
         webauthn: Si es una llave USB, asegurate de insertarla y, de ser necesario, tocarla.
       settings:
+        email_subscriptions: Deshabilitar retiene a los suscriptores existentes, pero detiene el envío de correos electrónicos.
         indexable: Tu página de perfil podría aparecer en los resultados de búsqueda en Google, Bing y otros motores de búsqueda.
         show_application: Sin embargo, siempre podrás ver desde qué aplicación se envió tu mensaje.
       tag:
@@ -153,7 +154,7 @@ es-AR:
         jurisdiction: Listá el país donde vive quien paga las facturas. Si es una empresa u otra entidad, enumerá el país donde está basada y la ciudad, región, territorio o provincia/estado, según corresponda.
         min_age: No debería estar por debajo de la edad mínima requerida por las leyes de su jurisdicción.
       user:
-        chosen_languages: Cuando estén marcados, solo se mostrarán los mensajes en los idiomas seleccionados en las líneas temporales públicas
+        chosen_languages: Cuando está marcado, solo los mensajes en los idiomas seleccionados se mostrarán en las líneas temporales públicas. Esta configuración no afecta a tu línea temporal principal ni a tus listas.
         date_of_birth:
           one: Tenemos que asegurarnos de que al menos tenés %{count} años de edad para usar %{domain}. No almacenaremos esta información.
           other: Tenemos que asegurarnos de que al menos tenés %{count} años de edad para usar %{domain}. No almacenaremos esta información.
@@ -356,6 +357,7 @@ es-AR:
         hint: Información adicional
         text: Regla
       settings:
+        email_subscriptions: Habilitar suscripciones por correo electrónico
         indexable: Incluir la página de perfil en los motores de búsqueda
         show_application: Mostrar desde qué aplicación enviaste un mensaje
       tag:

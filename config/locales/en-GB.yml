@@ -1229,7 +1229,6 @@ en-GB:
   application_mailer:
     notification_preferences: Change email preferences
     salutation: "%{name},"
-    settings: 'Change email preferences: %{link}'
     unsubscribe: Unsubscribe
     view: 'View:'
     view_profile: View profile
@@ -1412,8 +1411,6 @@ en-GB:
       your_appeal_pending: You have submitted an appeal
       your_appeal_rejected: Your appeal has been rejected
   edit_profile:
-    basic_information: Basic information
-    hint_html: "<strong>Customise what people see on your public profile and next to your posts.</strong> Other people are more likely to follow you back and interact with you when you have a filled out profile and a profile picture."
     other: Other
   emoji_styles:
     auto: Auto
@@ -1453,10 +1450,8 @@ en-GB:
     mutes: You mute
     storage: Media storage
   featured_tags:
-    add_new: Add new
     errors:
       limit: You have already featured the maximum number of hashtags
-    hint_html: "<strong>Feature your most important hashtags on your profile.</strong> A great tool for keeping track of your creative works and long-term projects, featured hashtags are displayed prominently on your profile and allow quick access to your own posts."
   filters:
     contexts:
       account: Profiles
@@ -1649,21 +1644,6 @@ en-GB:
     failed_sign_in_html: Failed login attempt with %{method} from %{ip} (%{browser})
     successful_sign_in_html: Successful login with %{method} from %{ip} (%{browser})
     title: Authentication history
-  mail_subscriptions:
-    unsubscribe:
-      action: Yes, unsubscribe
-      complete: Unsubscribed
-      confirmation_html: Are you sure you want to unsubscribe from receiving %{type} for Mastodon on %{domain} to your email at %{email}? You can always re-subscribe from your <a href="%{settings_path}">email notification settings</a>.
-      emails:
-        notification_emails:
-          favourite: favourite notification emails
-          follow: follow notification emails
-          follow_request: follow request emails
-          mention: mention notification emails
-          reblog: boost notification emails
-      resubscribe_html: If you've unsubscribed by mistake, you can re-subscribe from your <a href="%{settings_path}">email notification settings</a>.
-      success_html: You'll no longer receive %{type} for Mastodon on %{domain} to your email at %{email}.
-      title: Unsubscribe
   media_attachments:
     validations:
       images_and_video: Cannot attach a video to a post that already contains images
