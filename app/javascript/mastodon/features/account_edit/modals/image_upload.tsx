@@ -425,7 +425,11 @@ function parseImageFile(
 
     // Convert the ArrayBuffer to a base64 data URI.
     const bytes = new Uint8Array(buffer);
-    const base64 = btoa(String.fromCharCode(...bytes));
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    const base64 = btoa(binary);
     const dataUri = `data:${file.type};base64,${base64}`;
 
     // If the file type is not a GIF, then it's not animated as we don't support animated WebP or PNG.
@@ -451,7 +455,7 @@ function parseImageFile(
     }
 
     // If there is a delay time, the GIF is animated.
-    cb(dataUri, delayTime > 0);
+    cb(dataUri, delayTime >= 0);
   };
   reader.readAsArrayBuffer(file);
 }
