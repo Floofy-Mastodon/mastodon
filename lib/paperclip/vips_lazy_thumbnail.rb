@@ -2,7 +2,6 @@
 
 module Paperclip
   class LazyThumbnail < Paperclip::Processor
-    GIF_MAX_FPS = 60
     GIF_MAX_FRAMES = 3000
     GIF_PALETTE_COLORS = 256
 
@@ -62,8 +61,8 @@ module Paperclip
           end
         end
 
-        command = Terrapin::CommandLine.new(Rails.configuration.x.ffmpeg_binary, '-nostdin -i :source -map_metadata -1 -fpsmax :max_fps -frames:v :max_frames -filter_complex :filter -y :destination', logger: Paperclip.logger)
-        command.run({ source: @file.path, filter: "#{filter},split[a][b];[a]palettegen=max_colors=#{GIF_PALETTE_COLORS}[p];[b][p]paletteuse=dither=bayer", max_fps: GIF_MAX_FPS, max_frames: GIF_MAX_FRAMES, destination: dst.path })
+        command = Terrapin::CommandLine.new(Rails.configuration.x.ffmpeg_binary, '-nostdin -i :source -map_metadata -1 -fps_mode passthrough -frames:v :max_frames -filter_complex :filter -y :destination', logger: Paperclip.logger)
+        command.run({ source: @file.path, filter: "#{filter},split[a][b];[a]palettegen=max_colors=#{GIF_PALETTE_COLORS}[p];[b][p]paletteuse=dither=bayer", max_frames: GIF_MAX_FRAMES, destination: dst.path })
       else
         transformed_image.write_to_file(dst.path, **save_options)
       end
