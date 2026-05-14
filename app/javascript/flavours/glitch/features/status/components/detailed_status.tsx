@@ -17,6 +17,7 @@ import { Avatar } from 'flavours/glitch/components/avatar';
 import { ContentWarning } from 'flavours/glitch/components/content_warning';
 import { DisplayName } from 'flavours/glitch/components/display_name';
 import { EditedTimestamp } from 'flavours/glitch/components/edited_timestamp';
+import { AnimateEmojiProvider } from 'flavours/glitch/components/emoji/context';
 import { FilterWarning } from 'flavours/glitch/components/filter_warning';
 import { FormattedDateWrapper } from 'flavours/glitch/components/formatted_date';
 import type { StatusLike } from 'flavours/glitch/components/hashtag_bar';
@@ -28,7 +29,7 @@ import { Permalink } from 'flavours/glitch/components/permalink';
 import { PictureInPicturePlaceholder } from 'flavours/glitch/components/picture_in_picture_placeholder';
 import StatusContent from 'flavours/glitch/components/status_content';
 import { QuotedStatus } from 'flavours/glitch/components/status_quoted';
-import StatusReactions from 'flavours/glitch/components/status_reactions';
+import { StatusReactions } from 'flavours/glitch/components/status_reactions';
 import { VisibilityIcon } from 'flavours/glitch/components/visibility_icon';
 import { Audio } from 'flavours/glitch/features/audio';
 import { CollectionPreviewCard } from 'flavours/glitch/features/collections/components/collection_preview_card';
@@ -81,8 +82,6 @@ export const DetailedStatus: React.FC<{
   pictureInPicture,
   onToggleMediaVisibility,
   onToggleHidden,
-  onReactionAdd,
-  onReactionRemove,
   ancestors = 0,
   multiColumn = false,
   expanded,
@@ -528,13 +527,12 @@ export const DetailedStatus: React.FC<{
         {!expanded && <MentionsPlaceholder status={status} />}
 
         {!!visibleReactions && (
-          <StatusReactions
-            statusId={status.get('id')}
-            reactions={status.get('reactions')}
-            addReaction={onReactionAdd}
-            removeReaction={onReactionRemove}
-            canReact={signedIn}
-          />
+          <AnimateEmojiProvider>
+            <StatusReactions
+              id={status.get('id')}
+              reactions={status.get('reactions').toArray()}
+            />
+          </AnimateEmojiProvider>
         )}
 
         <div className='detailed-status__meta'>

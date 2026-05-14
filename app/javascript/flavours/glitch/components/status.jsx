@@ -9,6 +9,7 @@ import ImmutablePureComponent from 'react-immutable-pure-component';
 
 import { Hotkeys } from 'flavours/glitch/components/hotkeys';
 import { ContentWarning } from 'flavours/glitch/components/content_warning';
+import { AnimateEmojiProvider } from 'flavours/glitch/components/emoji/context';
 import { PictureInPicturePlaceholder } from 'flavours/glitch/components/picture_in_picture_placeholder';
 import { identityContextPropShape, withIdentity } from 'flavours/glitch/identity_context';
 import { autoUnfoldCW } from 'flavours/glitch/utils/content_warning';
@@ -35,6 +36,7 @@ import StatusReactions from './status_reactions';
 import { IconButton } from './icon_button';
 import { CollectionPreviewCard } from '../features/collections/components/collection_preview_card';
 import { compareUrls } from '../utils/compare_urls';
+
 
 const domParser = new DOMParser();
 
@@ -786,14 +788,12 @@ class Status extends ImmutablePureComponent {
             {/* This is a glitch-soc addition to have a placeholder */}
             {!expanded && <MentionsPlaceholder status={status} />}
 
-            <StatusReactions
-              statusId={status.get('id')}
-              reactions={status.get('reactions')}
-              numVisible={visibleReactions}
-              addReaction={this.props.onReactionAdd}
-              removeReaction={this.props.onReactionRemove}
-              canReact={this.props.identity.signedIn}
-            />
+            <AnimateEmojiProvider>
+              <StatusReactions
+                id={status.get('id')}
+                reactions={status.get('reactions').toArray()}
+              />
+            </AnimateEmojiProvider>
 
             {(showActions && !isQuotedPost) &&
               <StatusActionBar
