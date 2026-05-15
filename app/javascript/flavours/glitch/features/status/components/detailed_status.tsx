@@ -527,12 +527,10 @@ export const DetailedStatus: React.FC<{
         {!expanded && <MentionsPlaceholder status={status} />}
 
         {!!visibleReactions && (
-          <AnimateEmojiProvider>
-            <StatusReactions
-              id={status.get('id')}
-              reactions={status.get('reactions').toArray()}
-            />
-          </AnimateEmojiProvider>
+          <StatusReactions
+            id={status.get('id')}
+            reactions={status.get('reactions').toArray()}
+          />
         )}
 
         <div className='detailed-status__meta'>

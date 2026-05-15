@@ -9,7 +9,6 @@ import ImmutablePureComponent from 'react-immutable-pure-component';
 
 import { Hotkeys } from 'flavours/glitch/components/hotkeys';
 import { ContentWarning } from 'flavours/glitch/components/content_warning';
-import { AnimateEmojiProvider } from 'flavours/glitch/components/emoji/context';
 import { PictureInPicturePlaceholder } from 'flavours/glitch/components/picture_in_picture_placeholder';
 import { identityContextPropShape, withIdentity } from 'flavours/glitch/identity_context';
 import { autoUnfoldCW } from 'flavours/glitch/utils/content_warning';
@@ -33,10 +32,8 @@ import StatusContent from './status_content';
 import StatusIcons from './status_icons';
 import StatusPrepend from './status_prepend';
 import { StatusReactions } from './status_reactions';
-import { IconButton } from './icon_button';
 import { CollectionPreviewCard } from '../features/collections/components/collection_preview_card';
 import { compareUrls } from '../utils/compare_urls';
-
 
 const domParser = new DOMParser();
 
@@ -748,15 +745,15 @@ class Status extends ImmutablePureComponent {
           <div
             className={
               classNames('status', `status-${status.get('visibility')}`,
-              {
-                'status-reply': !!status.get('in_reply_to_id'),
-                'status--in-thread': !!rootId,
-                'status--first-in-thread': previousId && (!connectUp || connectToRoot),
-                muted: this.props.muted,
-                'status--is-quote': isQuotedPost,
-                'status--has-quote': !!status.get('quote'),
-                'status--highlighted-entry': this.props.shouldHighlightOnMount,
-              })
+                {
+                  'status-reply': !!status.get('in_reply_to_id'),
+                  'status--in-thread': !!rootId,
+                  'status--first-in-thread': previousId && (!connectUp || connectToRoot),
+                  muted: this.props.muted,
+                  'status--is-quote': isQuotedPost,
+                  'status--has-quote': !!status.get('quote'),
+                  'status--highlighted-entry': this.props.shouldHighlightOnMount,
+                })
             }
             data-id={status.get('id')}
           >
@@ -788,12 +785,10 @@ class Status extends ImmutablePureComponent {
             {/* This is a glitch-soc addition to have a placeholder */}
             {!expanded && <MentionsPlaceholder status={status} />}
 
-            <AnimateEmojiProvider>
-              <StatusReactions
-                id={status.get('id')}
-                reactions={status.get('reactions').toArray()}
-              />
-            </AnimateEmojiProvider>
+            <StatusReactions
+              id={status.get('id')}
+              reactions={status.get('reactions').toArray()}
+            />
 
             {(showActions && !isQuotedPost) &&
               <StatusActionBar
