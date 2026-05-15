@@ -127,7 +127,10 @@ export interface ApiStatusJSON {
   local_only?: boolean;
   content_type?: string;
 
+  // chuckya additions
+  reactions_count: number;
   reactions: ApiStatusReactionJSON[];
+  conversation_id: number;
 }
 
 export interface ApiContextJSON {
