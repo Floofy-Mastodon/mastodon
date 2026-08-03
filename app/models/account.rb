@@ -43,7 +43,6 @@
 #  private_key                   :text
 #  protocol                      :integer          default("ostatus"), not null
 #  public_key                    :text             default(""), not null
-#  requested_deletion_at         :datetime
 #  requested_review_at           :datetime
 #  reviewed_at                   :datetime
 #  sensitized_at                 :datetime
@@ -284,21 +283,6 @@ class Account < ApplicationRecord
 
   def refresh!
     ResolveAccountService.new.call(acct) unless local?
-  end
-
-  def deleted?
-    requested_deletion_at.present? && !instance_actor?
-  end
-
-  def permanently_deleted?
-    deleted? && deletion_request.nil?
-  end
-
-  def mark_deleted!(date: Time.now.utc)
-    transaction do
-      create_deletion_request!
-      update!(requested_deletion_at: date)
-    end
   end
 
   def memorialize!

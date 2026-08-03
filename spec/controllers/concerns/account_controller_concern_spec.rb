@@ -33,7 +33,7 @@ RSpec.describe AccountControllerConcern do
     end
   end
 
-  context 'when account is permanently suspended' do
+  context 'when account is suspended' do
     it 'returns http gone' do
       account = Fabricate(:account, suspended: true)
       get 'success', params: { account_username: account.username }
@@ -41,29 +41,11 @@ RSpec.describe AccountControllerConcern do
     end
   end
 
-  context 'when account is temporarily suspended' do
-    it 'returns http forbidden' do
-      account = Fabricate(:account)
-      account.suspend!
-      get 'success', params: { account_username: account.username }
-      expect(response).to have_http_status(403)
-    end
-  end
-
-  context 'when account is permanently deleted' do
+  context 'when account is deleted by owner' do
     it 'returns http gone' do
-      account = Fabricate(:account, requested_deletion: true)
+      account = Fabricate(:account, suspended: true, user: nil)
       get 'success', params: { account_username: account.username }
       expect(response).to have_http_status(410)
-    end
-  end
-
-  context 'when account is pending deletion' do
-    it 'returns http forbidden' do
-      account = Fabricate(:account)
-      account.mark_deleted!
-      get 'success', params: { account_username: account.username }
-      expect(response).to have_http_status(403)
     end
   end
 

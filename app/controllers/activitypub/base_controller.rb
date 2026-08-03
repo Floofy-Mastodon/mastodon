@@ -13,8 +13,4 @@ class ActivityPub::BaseController < Api::BaseController
   def skip_temporary_suspension_response?
     false
   end
-
-  def skip_pending_deletion_response?
-    false
-  end
 end
