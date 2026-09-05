@@ -63,8 +63,6 @@
 #
 
 class Account < ApplicationRecord
-  self.ignored_columns += %w(devices_url)
-
   BACKGROUND_REFRESH_INTERVAL = 1.week.freeze
   REFRESH_DEADLINE = 6.hours
   STALE_THRESHOLD = 1.day
@@ -310,6 +308,25 @@ class Account < ApplicationRecord
 
   def refresh!
     ResolveAccountService.new.call(acct) unless local?
+  end
+
+  def deleted?
+    requested_deletion_at.present? && !instance_actor?
+  end
+
+  def permanently_deleted?
+    deleted? && deletion_request.nil?
+  end
+
+  def mark_deleted!(date: Time.now.utc)
+    transaction do
+      create_deletion_request!
+      update!(requested_deletion_at: date)
+    end
+
+    # This terminates all connections for the given account with the streaming
+    # server:
+    redis.publish("timeline:system:#{id}", { event: :kill }.to_json) if local?
   end
 
   def memorialize!
