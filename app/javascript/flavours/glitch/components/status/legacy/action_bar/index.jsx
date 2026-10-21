@@ -16,7 +16,7 @@ import { accountAdminLink, statusAdminLink } from 'flavours/glitch/utils/backend
 import { WithRouterPropTypes } from 'flavours/glitch/utils/react_router';
 
 import { Dropdown } from '@/flavours/glitch/components/dropdown_menu';
-import EmojiPickerDropdown from '../../features/compose/containers/emoji_picker_dropdown_container';
+import EmojiPickerDropdown from '../../../../features/compose/containers/emoji_picker_dropdown_container';
 import { me, maxReactions, quickBoosting } from '@/flavours/glitch/initial_state';
 
 import { IconButton } from '@/flavours/glitch/components/icon_button';

@@ -43,6 +43,7 @@
 #  private_key                   :text
 #  protocol                      :integer          default("ostatus"), not null
 #  public_key                    :text             default(""), not null
+#  requested_deletion_at         :datetime
 #  requested_review_at           :datetime
 #  reviewed_at                   :datetime
 #  sensitized_at                 :datetime
@@ -329,6 +330,21 @@ class Account < ApplicationRecord
     # This terminates all connections for the given account with the streaming
     # server:
     redis.publish("timeline:system:#{id}", { event: :kill }.to_json) if local?
+  end
+
+  def deleted?
+    requested_deletion_at.present? && !instance_actor?
+  end
+
+  def permanently_deleted?
+    deleted? && deletion_request.nil?
+  end
+
+  def mark_deleted!(date: Time.now.utc)
+    transaction do
+      create_deletion_request!
+      update!(requested_deletion_at: date)
+    end
   end
 
   def memorialize!

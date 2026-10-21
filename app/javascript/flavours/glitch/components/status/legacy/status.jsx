@@ -31,10 +31,10 @@ import StatusActionBar from './action_bar';
 import StatusContent from './content';
 import StatusIcons from './icons';
 import StatusPrepend from './prepend';
-import { StatusReactions } from './status_reactions';
-import { CollectionPreviewCard } from '../features/collections/components/collection_preview_card';
-import { compareUrls } from '../utils/compare_urls';
-import { FOCUS_TARGET } from './navigation_focus_target';
+import { StatusReactions } from '../../status_reactions';
+import { CollectionPreviewCard } from '../../../features/collections/components/collection_preview_card';
+import { compareUrls } from '../../../utils/compare_urls';
+import { FOCUS_TARGET } from '../../navigation_focus_target';
 
 const domParser = new DOMParser();
 
